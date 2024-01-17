@@ -1237,7 +1237,7 @@ class Commander:  # pylint: disable=R0904
             envvars = f"MUNET_NODENAME={self.name} NODENAME={self.name}"
             if hasattr(self, "rundir"):
                 envvars += f" RUNDIR={self.rundir}"
-            if self.unet.config_dirname:
+            if hasattr(self.unet, "config_dirname") and self.unet.config_dirname:
                 envvars += f" CONFIGDIR={self.unet.config_dirname}"
             elif "CONFIGDIR" in os.environ:
                 envvars += f" CONFIGDIR={os.environ['CONFIGDIR']}"
