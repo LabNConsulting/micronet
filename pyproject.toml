@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "munet"
-version = "0.13.12"
+version = "0.13.13"
 description = "A package to facilitate network simulations"
 authors = ["Christian Hopps <chopps@labn.net>"]
 license = "GPL-2.0-or-later"
