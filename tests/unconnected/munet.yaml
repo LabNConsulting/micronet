@@ -1,0 +1,31 @@
+version: 1
+topology:
+  networks-autonumber: true
+  ipv6-enable: true
+  networks:
+    - name: net0
+      mtu: 5000
+  nodes:
+    - name: r1
+      connections:
+        - to: net0
+          name: eth0
+          mtu: 4500
+        - name: unconnected
+          ip: 172.16.0.1/24
+          mtu: 9000
+      cmd: |
+        ip addr show
+        ip -6 addr show
+        which ping
+        tail -f /dev/null
+    - name: r2
+      connections:
+        - to: "net0"
+          name: eth0
+          mtu: 4500
+      cmd: |
+        ip addr show
+        ip -6 addr show
+        which ping
+        tail -f /dev/null

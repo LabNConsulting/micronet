@@ -2714,6 +2714,34 @@ class BaseMunet(LinuxNamespace):
 
         return self.hosts[name]
 
+    def add_dummy(self, node1, if1, mtu=None, **intf_constraints):
+        """Add a dummy for an interface with no link."""
+
+        try:
+            name1 = node1.name
+        except AttributeError:
+            if node1 in self.switches:
+                node1 = self.switches[node1]
+            else:
+                node1 = self.hosts[node1]
+            name1 = node1.name
+
+        lname = "{}:{}".format(name1, if1)
+        self.logger.debug("%s: add_dummy %s", self, lname)
+        lhost = self.hosts[name1]
+
+        nsif1 = lhost.get_ns_ifname(if1)
+        lhost.cmd_raises_nsonly(f"ip link add name {nsif1} type dummy")
+
+        if mtu:
+            lhost.cmd_raises_nsonly(f"ip link set {nsif1} mtu {mtu}")
+        lhost.cmd_raises_nsonly(f"ip link set {nsif1} up")
+        lhost.register_interface(if1)
+
+        # Setup interface constraints if provided
+        if intf_constraints:
+            node1.set_intf_constraints(if1, **intf_constraints)
+
     def add_link(self, node1, node2, if1, if2, mtu=None, **intf_constraints):
         """Add a link between switch and node or 2 nodes.
 

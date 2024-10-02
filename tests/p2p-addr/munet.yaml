@@ -1,0 +1,28 @@
+version: 1
+topology:
+  ipv6-enable: true
+  nodes:
+    - name: r1
+      connections:
+        - to: r2
+          name: eth0
+          mtu: 4500
+          ip: 172.16.0.1/32
+          ipv6: 2001:db8::1/128
+      cmd: |
+        ip addr show
+        ip -6 addr show
+        which ping
+        tail -f /dev/null
+    - name: r2
+      connections:
+        - to: r1
+          name: eth0
+          mtu: 4500
+          ip: 172.16.1.2/24
+          ipv6: 2001:db8::1:1/112
+      cmd: |
+        ip addr show
+        ip -6 addr show
+        which ping
+        tail -f /dev/null
