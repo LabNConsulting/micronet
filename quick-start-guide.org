@@ -1,0 +1,38 @@
+#+OPTIONS: \n:t
+* Quick start guide
+  This are the steps to get the software running under Ubuntu 20.04
+** Requirements
+*** Poetry
+    [[https://python-poetry.org/docs/#installation][installation guide]]
+*** virtualenv
+    You will need the virtualenv package. In my case I installed it with pip3 and it didn't work.
+    I had to uninstall the package (also running pip3 uninstall virtualenv didn't work, I had to do ~rm -rf /usr/lib/python3/dist-packages/virtualenv~)
+    and then reinstall it with ~apt install virtualenv~
+** Installation
+   Clone the git repository.
+   cd into munet and run ~make install~.
+   If the command fails and you see something like this:
+   #+begin_src bash
+   Creating virtualenv munet in /home/maximiliano/munet/.venv
+
+   ModuleNotFoundError
+
+   No module named 'virtualenv.seed.via_app_data'
+   #+end_src
+   you probably are trying to use the virtualenv package from pip3 (see [[virtualenv]])
+** Running the program
+   To run the program you can type ~make run~. You will be prompted for your sudo password. This is necessary because you need admin privileges to create namespaces
+   You can have a look in examples/frr/ospf/ospf/munet.yaml for an example configuration. The program looks for the munet.yaml configuration on the working directory,
+   so you will need to copy the contents of the example directory into the base directory
+
+   The ~make run~ command is an alias to:
+   #+begin_src bash
+   sudo -E env -u VIRTUAL_ENV PATH=<your_path> poetry run python3 -m munet
+   #+end_src
+   so you can also run this command directly on other directories that have a munet.yaml config file
+
+   If running the program fails with:
+   #+begin_src bash
+   FileNotFoundError: munet.{json,toml,yaml}
+   #+end_src
+   it means that it failed to find the configuration file
