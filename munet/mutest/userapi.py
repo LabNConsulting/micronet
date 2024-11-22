@@ -431,6 +431,7 @@ class TestCase:
         self,
         target: str,
         cmd: str,
+        **kwargs,
     ) -> str:
         """Execute a ``cmd`` and return result.
 
@@ -439,7 +440,7 @@ class TestCase:
             cmd: string to execut on the target.
         """
         out = self.targets[target].cmd_nostatus(
-            cmd, stdin=subprocess.DEVNULL, warn=False
+            cmd, stdin=subprocess.DEVNULL, warn=False, **kwargs
         )
         self.last = out = out.rstrip()
         report = out if out else "<no output>"
@@ -742,20 +743,26 @@ class TestCase:
         self.oplogf("   section setting __in_section to True")
         self.__print_header(self.info.tag, desc, add_nl)
 
-    def step(self, target: str, cmd: str) -> str:
+    def step(
+        self,
+        target: str,
+        cmd: str,
+        output: bool = True,
+    ) -> str:
         """See :py:func:`~munet.mutest.userapi.step`.
 
         :meta private:
         """
         self.logf(
-            "#%s.%s:%s:STEP:%s:%s",
+            "#%s.%s:%s:STEP:%s:%s:%s",
             self.tag,
             self.steps + 1,
             self.info.path,
             target,
             cmd,
+            output,
         )
-        return self._command(target, cmd)
+        return self._command(target, cmd, output=output)
 
     def step_json(self, target: str, cmd: str) -> Union[list, dict]:
         """See :py:func:`~munet.mutest.userapi.step_json`.
@@ -1007,17 +1014,18 @@ def get_target(name: str) -> Commander:
     return TestCase.g_tc.targets[name]
 
 
-def step(target: str, cmd: str) -> str:
+def step(target: str, cmd: str, output: bool = True) -> str:
     """Execute a ``cmd`` on a ``target`` and return the output.
 
     Args:
         target: the target to execute the ``cmd`` on.
         cmd: string to execute on the target.
+        output: if False, then DO NOT wait for output. Otherwise waits for ``cmd`` completion.
 
     Returns:
         Returns the ``str`` output of the ``cmd``.
     """
-    return TestCase.g_tc.step(target, cmd)
+    return TestCase.g_tc.step(target, cmd, output)
 
 
 def step_json(target: str, cmd: str) -> Union[list, dict]:

@@ -944,7 +944,15 @@ class Commander:  # pylint: disable=R0904
                 raise CalledProcessError(rc, ac, o, e)
         return rc, o, e
 
-    def _cmd_status(self, cmds, raises=False, warn=True, stdin=None, **kwargs):
+    def _cmd_status(
+        self,
+        cmds,
+        raises=False,
+        warn=True,
+        stdin=None,
+        output=True,
+        **kwargs
+    ):
         """Execute a command."""
         timeout = None
         if "timeout" in kwargs:
@@ -953,7 +961,11 @@ class Commander:  # pylint: disable=R0904
 
         pinput, stdin = Commander._cmd_status_input(stdin)
         p, actual_cmd = self._popen("cmd_status", cmds, stdin=stdin, **kwargs)
-        o, e = p.communicate(pinput, timeout=timeout)
+        if output:
+            o, e = p.communicate(pinput, timeout=timeout)
+        else:
+            o = ''
+            e = ''
         return self._cmd_status_finish(p, cmds, actual_cmd, o, e, raises, warn)
 
     async def _async_cmd_status(
