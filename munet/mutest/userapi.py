@@ -114,14 +114,16 @@ def pause_test(desc=""):
 
 
 def act_on_result(success, args, desc=""):
-    if args.pause:
-        pause_test(desc)
-    elif success:
-        return
-    if args.cli_on_error:
-        raise CLIOnErrorError()
-    if args.pause_on_error:
-        pause_test(desc)
+    # Pausing on a hidden step may cause confusion
+    if desc is not "":
+        if args.pause:
+            pause_test(desc)
+        elif success:
+            return
+        if args.cli_on_error:
+            raise CLIOnErrorError()
+        if args.pause_on_error:
+            pause_test(desc)
 
 
 class TestCaseInfo:
